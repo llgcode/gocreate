@@ -1,0 +1,13 @@
+{
+	"doc": "Create a go file with hello world inside, default file name: main.go",
+	"leftDelim": "$",
+	"rightDelim": "$",
+	"args": [
+			{
+				"arg" : "name",
+				"name" : "name",
+				"doc": "The template name",
+				"required": true
+			}
+	]
+}

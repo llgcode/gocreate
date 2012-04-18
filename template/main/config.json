@@ -1,0 +1,17 @@
+{
+	"doc": "Create a go file with hello world inside, default file name: main.go",
+	"args": [
+			{
+				"arg" : "o",
+				"name" : "output",
+				"doc": "Change the ouput file name, don't set the extension '.go'",
+				"default": "main"
+			},
+			{
+				"arg" : "p",
+				"name" : "package",
+				"doc": "Change the package Name",
+				"default": "main"
+			}
+	]
+}

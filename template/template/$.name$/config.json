@@ -1,0 +1,17 @@
+{
+	"doc": "Example of simple template $.name$",
+	"args": [
+			{
+				"arg" : "o",
+				"name" : "output",
+				"doc": "Change the ouput file name, don't set the extension '.go'",
+				"default": "main"
+			},
+			{
+				"arg" : "p",
+				"name" : "package",
+				"doc": "Change the package Name",
+				"default": "main"
+			}
+	]
+}
