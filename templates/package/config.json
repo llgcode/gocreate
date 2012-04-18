@@ -1,0 +1,11 @@
+{
+	"doc": "Create a new package",
+	"args": [
+			{
+				"arg" : "p",
+				"name" : "package",
+				"doc": "Set the package name",
+				"required": true
+			}
+	]
+}

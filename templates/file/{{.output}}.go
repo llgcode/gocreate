@@ -1,3 +1,5 @@
+{{template "copyright" .}}
+
 package {{.package}}
 
 import (

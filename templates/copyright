@@ -1,0 +1,2 @@
+// Copyright {{.now.Year}} The {{.package}} Authors. All rights reserved.
+// created on {{printf "%02d/%02d/%d" .now.Day .now.Month .now.Year}} by {{template "author" .}}
