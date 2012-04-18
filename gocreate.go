@@ -25,7 +25,7 @@ const DefaultTemplateDir = "bitbucket.org/llg/gocreate/templates"
 const ConfigFileName = "config.json"
 
 var help = flag.Bool("help", false, "Show help")
-var override = flag.Bool("f", false, "Override existing file")
+var override = flag.Bool("f", false, "Override existing files")
 
 type Config struct {
 	Doc        string
@@ -60,16 +60,17 @@ func showCommandHelp(cmd, templateDir string, c *Config) {
 	fmt.Printf("Usage:\n  gocreate %s", cmd)
 	for _, arg := range c.Args {
 		if strings.HasPrefix(arg.Arg, "$") {
-			fmt.Printf("'%s'", arg.Name)
+			fmt.Printf(" '%s'", arg.Name)
 		}
 	}
 	fmt.Println("\n")
-	fmt.Println(" ", c.Doc)
-	flag.PrintDefaults()
+	fmt.Println("  " + c.Doc + "\n")
+	fmt.Println("  -help: Show Command help")
+	fmt.Println("  -f: Override existing files")
 	for _, arg := range c.Args {
-		fmt.Printf("  -%s=%s: %s -> %s (required:%t)\n", arg.Arg, *arg.Value, arg.Name, arg.Doc, arg.Required)
+		fmt.Printf("  -%s=%s: '%s'. %s (required:%t)\n", arg.Arg, *arg.Value, arg.Name, arg.Doc, arg.Required)
 	}
-	fmt.Println("    Template Path:", templateDir)
+	fmt.Println("\n  Template Path:", templateDir)
 }
 
 func showHelp(templatesDir string) {
