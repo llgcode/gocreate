@@ -12,7 +12,7 @@ import (
 	"text/template"
 )
 
-const DefaultTemplateDir = "bitbucket.org/llg/gocreate/template"
+const DefaultTemplateDir = "bitbucket.org/llg/gocreate/templates"
 const ConfigFileName = "config.json"
 
 var help = flag.Bool("help", false, "Show help")
