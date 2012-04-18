@@ -2,8 +2,8 @@
 // created on 18/04/2012 by Laurent Le Goff
 
 // Command line utility that create files from templates.
-// go get bitbucket.org/llg/gocreate
-// gocreate
+//     go get bitbucket.org/llg/gocreate
+//     gocreate
 package main
 
 import (
