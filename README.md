@@ -19,6 +19,9 @@ You can change template directory by defining an environment variable $GOTEMPLAT
 
 Add a template
 ==============
+
+Before starting creating your template see defaults template:
+ https://bitbucket.org/llg/gocreate/src/tip/templates
     
     execute:
       $ gocreate template -name mytemplate
@@ -28,3 +31,4 @@ Add a template
     or
       $ mv mytemplate $GOTEMPLATE 
     if you have defined $GOTEMPLATE environment variable
+
