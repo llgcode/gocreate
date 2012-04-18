@@ -15,6 +15,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
+	"strings"
 	"text/template"
 	"time"
 )
@@ -55,9 +57,18 @@ func readConfigFile(templateDir string) (c *Config) {
 }
 
 func showCommandHelp(cmd, templateDir string, c *Config) {
-	fmt.Fprintf(os.Stderr, "Usage of gocreate %s:\n", cmd)
-	fmt.Println("   ", c.Doc)
+	fmt.Printf("Usage:\n  gocreate %s", cmd)
+	for _, arg := range c.Args {
+		if strings.HasPrefix(arg.Arg, "$") {
+			fmt.Printf("'%s'", arg.Name)
+		}
+	}
+	fmt.Println("\n")
+	fmt.Println(" ", c.Doc)
 	flag.PrintDefaults()
+	for _, arg := range c.Args {
+		fmt.Printf("  -%s=%s: %s -> %s (required:%t)\n", arg.Arg, *arg.Value, arg.Name, arg.Doc, arg.Required)
+	}
 	fmt.Println("    Template Path:", templateDir)
 }
 
@@ -93,7 +104,7 @@ func create(ctx *template.Template, sourceFilePath, destFilePath string, c *Conf
 			fmt.Println("Create:", destFilePath)
 		}
 		os.IsExist(err)
-		destFile, err := os.OpenFile(destFilePath, os.O_CREATE|os.O_WRONLY| os.O_TRUNC, 0666)
+		destFile, err := os.OpenFile(destFilePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 		if err != nil {
 			panic(err)
 		}
@@ -167,7 +178,9 @@ func main() {
 		if arg.Value != nil {
 			def = *arg.Value
 		}
-		arg.Value = flag.String(arg.Arg, def, arg.Doc)
+		if !strings.HasPrefix(arg.Arg, "$") {
+			arg.Value = flag.String(arg.Arg, def, arg.Doc)
+		}
 	}
 	os.Args = os.Args[1:]
 	flag.Parse()
@@ -179,17 +192,25 @@ func main() {
 		c.Vars = make(map[string]interface{})
 	}
 	for _, arg := range c.Args {
+		if strings.HasPrefix(arg.Arg, "$") {
+			i, err := strconv.ParseInt(arg.Arg[1:], 10, 0)
+			if err != nil {
+				panic(err)
+			}
+			*arg.Value = flag.Arg(int(i))
+		}
 		val := *arg.Value
 		if val == "" && arg.Required {
 			fmt.Println("-"+arg.Name, " option is Required!!")
 			showCommandHelp(templateName, templateDirPath, c)
 			return
 		}
-		c.Vars[arg.Name] = *arg.Value
+
+		c.Vars[arg.Name] = val
 	}
 	c.Vars["now"] = time.Now()
 	ctx := template.New("templates")
-	
+
 	templatesDir, err := os.Open(templatesDirPath)
 	files, err := templatesDir.Readdir(-1)
 	if err != nil {

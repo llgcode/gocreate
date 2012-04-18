@@ -4,7 +4,7 @@
 	"rightDelim": "$",
 	"args": [
 			{
-				"arg" : "name",
+				"arg" : "$0",
 				"name" : "name",
 				"doc": "The template name",
 				"required": true

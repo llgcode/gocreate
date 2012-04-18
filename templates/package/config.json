@@ -2,7 +2,7 @@
 	"doc": "Create a new package",
 	"args": [
 			{
-				"arg" : "p",
+				"arg" : "$0",
 				"name" : "package",
 				"doc": "Set the package name",
 				"required": true
