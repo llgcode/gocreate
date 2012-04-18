@@ -8,6 +8,7 @@ Usage
 Command line utility that create files from templates.
 
 example usage:
+    
     $ gocreate
     $ gocreate -help
     $ gocreate main -help
@@ -26,4 +27,4 @@ Add a template
       $ mv mytemplate $GOPATH/src/bitbucket.org/llg/gocreate/templates
     or
       $ mv mytemplate $GOTEMPLATE 
-    if you have define $GOTEMPLATE environment variable
+    if you have defined $GOTEMPLATE environment variable
