@@ -175,12 +175,11 @@ func main() {
 	templateDirPath := filepath.Join(templatesDirPath, templateName)
 	c := readConfigFile(templateDirPath)
 	for _, arg := range c.Args {
-		def := ""
-		if arg.Value != nil {
-			def = *arg.Value
+		if arg.Value == nil {
+			arg.Value = new(string)
 		}
 		if !strings.HasPrefix(arg.Arg, "$") {
-			arg.Value = flag.String(arg.Arg, def, arg.Doc)
+			arg.Value = flag.String(arg.Arg, *arg.Value, arg.Doc)
 		}
 	}
 	os.Args = os.Args[1:]
@@ -193,6 +192,7 @@ func main() {
 		c.Vars = make(map[string]interface{})
 	}
 	for _, arg := range c.Args {
+		var val string
 		if strings.HasPrefix(arg.Arg, "$") {
 			i, err := strconv.ParseInt(arg.Arg[1:], 10, 0)
 			if err != nil {
@@ -200,7 +200,7 @@ func main() {
 			}
 			*arg.Value = flag.Arg(int(i))
 		}
-		val := *arg.Value
+		val = *arg.Value
 		if val == "" && arg.Required {
 			fmt.Println("-"+arg.Name, " option is Required!!")
 			showCommandHelp(templateName, templateDirPath, c)
