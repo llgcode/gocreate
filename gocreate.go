@@ -87,8 +87,10 @@ func showHelp(templatesDir string) {
 	fmt.Println("\nTemplates Path:", templatesDir)
 	fmt.Println("\nList of Templates: ")
 	for _, file := range files {
-		c := readConfigFile(filepath.Join(templatesDir, file.Name()))
-		fmt.Printf("%s: gocreate %s -help\n    %s\n", file.Name(), file.Name(), c.Doc)
+		if file.IsDir() {
+			c := readConfigFile(filepath.Join(templatesDir, file.Name()))
+			fmt.Printf("%s: gocreate %s -help\n    %s\n", file.Name(), file.Name(), c.Doc)
+		}
 	}
 }
 func create(ctx *template.Template, sourceFilePath, destFilePath string, c *Config) {
