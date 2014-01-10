@@ -143,7 +143,7 @@ func createFromTemplateDir(ctx *template.Template, templateSourcePath, sourceFol
 		err = tmpl.ExecuteTemplate(&buf, "filename", c.Vars)
 		destFilePath := filepath.Join(destFolder, string(buf.Bytes()))
 		if file.IsDir() {
-			err = os.MkdirAll(destFilePath, 0666)
+			err = os.MkdirAll(destFilePath, 0766)
 			if err != nil {
 				panic(err)
 			}
