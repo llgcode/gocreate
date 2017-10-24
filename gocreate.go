@@ -2,7 +2,7 @@
 // created on 18/04/2012 by Laurent Le Goff
 
 // Command line utility that create files from templates.
-//     go get bitbucket.org/llg/gocreate
+//     go get github.com/llgcode/gocreate
 //     gocreate
 package main
 
@@ -21,7 +21,7 @@ import (
 	"time"
 )
 
-const DefaultTemplateDir = "bitbucket.org/llg/gocreate/templates"
+const DefaultTemplateDir = "github.com/llgcode/gocreate/templates"
 const ConfigFileName = "config.json"
 
 var help = flag.Bool("help", false, "Show help")
