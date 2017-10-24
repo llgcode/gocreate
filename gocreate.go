@@ -22,12 +22,16 @@ import (
 	"unicode"
 )
 
+// DefaultTemplateDir is the default template folder it can be overrides with env variable GOTEMPLATE
 const DefaultTemplateDir = "github.com/llgcode/gocreate/templates"
+
+// ConfigFileName is the config file name used to configure a template
 const ConfigFileName = "config.json"
 
 var help = flag.Bool("help", false, "Show help")
 var override = flag.Bool("f", false, "Override existing files")
 
+// Config represents config.json internal file structure
 type Config struct {
 	Doc        string
 	LeftDelim  string
@@ -36,6 +40,7 @@ type Config struct {
 	Args       []*Arg
 }
 
+// Arg represents arguments defined in config
 type Arg struct {
 	Arg      string
 	Name     string
@@ -49,6 +54,10 @@ var funcMap = template.FuncMap{
 	"ToLower": strings.ToLower,
 	"ToSnake": ToSnake,
 	"ToSSnake": ToSSnake,
+	"JName": JName,
+	"JPackage": JPackage,
+	"JPackagePath": JPackagePath,
+	"JPath": JPath,
 }
 
 func readConfigFile(templateDir string) (c *Config) {
@@ -71,7 +80,8 @@ func showCommandHelp(cmd, templateDir string, c *Config) {
 			fmt.Printf(" '%s'", arg.Name)
 		}
 	}
-	fmt.Println("\n")
+	fmt.Println()
+	fmt.Println()
 	fmt.Println("  " + c.Doc + "\n")
 	fmt.Println("  -help: Show Command help")
 	fmt.Println("  -f: Override existing files")
@@ -82,8 +92,10 @@ func showCommandHelp(cmd, templateDir string, c *Config) {
 }
 
 func showHelp(templatesDir string) {
-	fmt.Fprintln(os.Stderr, "Usage of gocreate:\n")
-	fmt.Fprintln(os.Stderr, "  gocreate 'templateName'\n")
+	fmt.Fprintln(os.Stderr, "Usage of gocreate:")
+	fmt.Println()
+	fmt.Fprintln(os.Stderr, "  gocreate 'templateName'")
+	fmt.Println()
 	flag.PrintDefaults()
 	template, err := os.Open(templatesDir)
 	files, err := template.Readdir(-1)
@@ -196,6 +208,49 @@ func ToSSnake(in string) string {
 	return string(out)
 }
 
+
+// JName extract last segment of Java Qualified Name
+func JName(in string) string {
+	length := len(in)
+	for i := length - 1; i >= 0; i-- {
+		if in[i] == '.' {
+			return in[i+1:]
+		}
+	}
+	return in
+}
+
+// JPackage extract package of Java Qualified Name
+func JPackage(in string) string {
+	length := len(in)
+	for i := length - 1; i >= 0; i-- {
+		if in[i] == '.' {
+			return in[0:i]
+		}
+	}
+	return in
+}
+
+// JPackagePath excute JPacakage an JPath function on string
+func JPackagePath(in string) string {
+	return JPath(JPackage(in))
+}
+
+// JPath transform a Java Qualified Name to a folder path
+func JPath(in string) string {
+	runes := []rune(in)
+	length := len(runes)
+	var out []rune
+	for i := 0; i < length; i++ {
+		if runes[i] == '.' {
+			out = append(out, '/')
+		} else {
+			out = append(out, runes[i])
+		}
+	}
+	return string(out)
+}
+
 func main() {
 	templatesDirPath := os.Getenv("GOTEMPLATE")
 	if templatesDirPath == "" {
@@ -242,7 +297,9 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			*arg.Value = flag.Arg(int(i))
+			if flag.Arg(int(i)) != "" {
+				*arg.Value = flag.Arg(int(i))
+			}
 		}
 		val = *arg.Value
 		if val == "" && arg.Required {
