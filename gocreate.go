@@ -44,6 +44,13 @@ type Arg struct {
 	Required bool
 }
 
+var funcMap = template.FuncMap{
+	"ToUpper": strings.ToUpper,
+	"ToLower": strings.ToLower,
+	"ToSnake": ToSnake,
+	"ToSSnake": ToSSnake,
+}
+
 func readConfigFile(templateDir string) (c *Config) {
 	configFilePath := filepath.Join(templateDir, ConfigFileName)
 	content, err := ioutil.ReadFile(configFilePath)
@@ -136,7 +143,7 @@ func createFromTemplateDir(ctx *template.Template, templateSourcePath, sourceFol
 	for _, file := range files {
 		sourceFilePath := filepath.Join(sourceFolder, file.Name())
 		tmplName := filepath.Base(sourceFilePath)
-		tmpl, err := template.New("filename").Delims(c.LeftDelim, c.RightDelim).Parse(tmplName)
+		tmpl, err := template.New("filename").Funcs(funcMap).Delims(c.LeftDelim, c.RightDelim).Parse(tmplName)
 		if err != nil {
 			panic(err)
 		}
@@ -247,13 +254,6 @@ func main() {
 		c.Vars[arg.Name] = val
 	}
 	c.Vars["now"] = time.Now()
-
-	funcMap := template.FuncMap{
-		"ToUpper": strings.ToUpper,
-		"ToLower": strings.ToLower,
-		"ToSnake": ToSnake,
-		"ToSSnake": ToSSnake,
-    }
 	
 	ctx := template.New("templates").Funcs(funcMap)
 
