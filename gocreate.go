@@ -19,6 +19,7 @@ import (
 	"strings"
 	"text/template"
 	"time"
+	"unicode"
 )
 
 const DefaultTemplateDir = "github.com/llgcode/gocreate/templates"
@@ -154,6 +155,40 @@ func createFromTemplateDir(ctx *template.Template, templateSourcePath, sourceFol
 	}
 }
 
+// ToSnake convert the given CamelCase string to snake case:
+// acronyms are converted to lower-case and preceded by an -.
+func ToSnake(in string) string {
+	runes := []rune(in)
+	length := len(runes)
+
+	var out []rune
+	for i := 0; i < length; i++ {
+		if i > 0 && unicode.IsUpper(runes[i]) && ((i+1 < length && unicode.IsLower(runes[i+1])) || unicode.IsLower(runes[i-1])) {
+			out = append(out, '-')
+		}
+		out = append(out, unicode.ToLower(runes[i]))
+	}
+
+	return string(out)
+}
+
+// ToSSnake convert the given CamelCase string to Screaming Snake Case:
+// acronyms are converted to upper-case and preceded by an _.
+func ToSSnake(in string) string {
+	runes := []rune(in)
+	length := len(runes)
+
+	var out []rune
+	for i := 0; i < length; i++ {
+		if i > 0 && unicode.IsUpper(runes[i]) && ((i+1 < length && unicode.IsLower(runes[i+1])) || unicode.IsLower(runes[i-1])) {
+			out = append(out, '_')
+		}
+		out = append(out, unicode.ToUpper(runes[i]))
+	}
+
+	return string(out)
+}
+
 func main() {
 	templatesDirPath := os.Getenv("GOTEMPLATE")
 	if templatesDirPath == "" {
@@ -212,7 +247,15 @@ func main() {
 		c.Vars[arg.Name] = val
 	}
 	c.Vars["now"] = time.Now()
-	ctx := template.New("templates")
+
+	funcMap := template.FuncMap{
+		"ToUpper": strings.ToUpper,
+		"ToLower": strings.ToLower,
+		"ToSnake": ToSnake,
+		"ToSSnake": ToSSnake,
+    }
+	
+	ctx := template.New("templates").Funcs(funcMap)
 
 	templatesDir, err := os.Open(templatesDirPath)
 	files, err := templatesDir.Readdir(-1)
